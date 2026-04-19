@@ -1,0 +1,47 @@
+# 服务器端口
+server:
+  port: 9154
+# 应用信息
+spring:
+  application:
+    name: mymongo
+    version: 1.0.0
+  # mysql
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    #MySQL??
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/e3-mall?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  # mongodb
+  data:
+    mongodb:
+      host: 127.0.0.1   # MongoDB地址
+      port: 27017          # 端口
+      database: demodb # 数据库
+      #username: root       #
+      #password: YTKJ9fyb^H%8Gy  #
+      auto-index-creation: true      #
+# Nebula Graph
+nebula:
+  graph:
+    addresses:
+      - 192.168.213.148  # graphd 地址（Docker 本机 or 服务器）
+    user: root
+    password: nebula
+    max-conn-size: 100
+    timeout: 1000
+
+#nebula:
+#  graphd:
+#    addresses:
+#      - 192.168.10.26:9669   # graphd 地址（Docker 本机 or 服务器）
+#    timeout: 3000             # 连接 & 执行超时（毫秒）
+#    idle-time: 60000          # 连接空闲时间
+#    max-conn: 10              # 连接池最大连接数
+#    min-conn: 1               # 连接池最小连接数
+#    user: root
+#    password: nebula
+#  space:
+#    default: table_relation_space       # 默认 Space（可选）
