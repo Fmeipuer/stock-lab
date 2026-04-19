@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票涨停复利计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+            color: #111827;
+        }
+
+        .description {
+            margin: 0 0 24px;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            padding: 0 12px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .hint {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .actions {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 22px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .primary-btn {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        .primary-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-btn {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .secondary-btn:hover {
+            background: #d1d5db;
+        }
+
+        .error {
+            display: none;
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .summary {
+            display: none;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .summary-item {
+            border-radius: 12px;
+            background: #f9fafb;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .summary-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+            word-break: break-all;
+        }
+
+        .table-wrap {
+            display: none;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+
+        th,
+        td {
+            padding: 13px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #374151;
+            font-weight: 700;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .empty {
+            display: none;
+            color: #6b7280;
+            padding: 14px 0;
+        }
+
+        @media (max-width: 760px) {
+            .form-grid,
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 24px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>股票涨停复利计算器</h1>
+        <p class="description">
+            输入起始金额、涨停利率和目标金额，计算达到目标金额总共需要多少期涨停，并展示每次涨停后的金额。
+        </p>
+
+        <div class="form-grid">
+            <div>
+                <label for="startingAmount">起始金额</label>
+                <input id="startingAmount" type="number" min="0" step="0.01" placeholder="例如：10000">
+                <div class="hint">请输入大于 0 的金额</div>
+            </div>
+            <div>
+                <label for="rate">涨停利率（%）</label>
+                <input id="rate" type="number" min="0" max="100" step="0.0001" placeholder="例如：10">
+                <div class="hint">输入 10 表示 10%</div>
+            </div>
+            <div>
+                <label for="targetAmount">目标金额</label>
+                <input id="targetAmount" type="number" min="0" step="0.01" placeholder="例如：15000">
+                <div class="hint">请输入大于 0 的目标金额</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="primary-btn" type="button" onclick="calculate()">开始计算</button>
+            <button class="secondary-btn" type="button" onclick="resetForm()">重置</button>
+        </div>
+
+        <div id="error" class="error"></div>
+    </div>
+
+    <div id="summary" class="card summary">
+        <div class="summary-item">
+            <div class="summary-label">起始金额</div>
+            <div id="summaryStartingAmount" class="summary-value">-</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">目标金额</div>
+            <div id="summaryTargetAmount" class="summary-value">-</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">需要涨停期数</div>
+            <div id="summaryTotalPeriods" class="summary-value">-</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">最终金额</div>
+            <div id="summaryFinalAmount" class="summary-value">-</div>
+        </div>
+    </div>
+
+    <div id="tableWrap" class="card table-wrap">
+        <h2>每次涨停后的金额</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>期数</th>
+                <th>涨停后金额</th>
+            </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+        </table>
+    </div>
+
+    <div id="empty" class="card empty">起始金额已达到或超过目标金额，无需涨停。</div>
+</div>
+
+<script>
+    function getNumberValue(id) {
+        const value = document.getElementById(id).value;
+        return value === '' ? null : Number(value);
+    }
+
+    function showError(message) {
+        const error = document.getElementById('error');
+        error.textContent = message;
+        error.style.display = 'block';
+    }
+
+    function hideError() {
+        const error = document.getElementById('error');
+        error.textContent = '';
+        error.style.display = 'none';
+    }
+
+    function formatMoney(value) {
+        return Number(value).toFixed(2);
+    }
+
+    function validate(startingAmount, rate, targetAmount) {
+        if (startingAmount === null || Number.isNaN(startingAmount)) {
+            return '请输入起始金额';
+        }
+        if (startingAmount <= 0) {
+            return '起始金额必须大于0';
+        }
+        if (rate === null || Number.isNaN(rate)) {
+            return '请输入涨停利率';
+        }
+        if (rate <= 0) {
+            return '涨停利率必须大于0';
+        }
+        if (rate > 100) {
+            return '涨停利率不能大于100';
+        }
+        if (targetAmount === null || Number.isNaN(targetAmount)) {
+            return '请输入目标金额';
+        }
+        if (targetAmount <= 0) {
+            return '目标金额必须大于0';
+        }
+        return '';
+    }
+
+    async function calculate() {
+        hideError();
+
+        const startingAmount = getNumberValue('startingAmount');
+        const rate = getNumberValue('rate');
+        const targetAmount = getNumberValue('targetAmount');
+        const validationMessage = validate(startingAmount, rate, targetAmount);
+
+        if (validationMessage) {
+            showError(validationMessage);
+            return;
+        }
+
+        try {
+            const response = await fetch('/stock/limit-up/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    startingAmount,
+                    rate,
+                    targetAmount
+                })
+            });
+
+            const result = await response.json();
+            if (result.code !== 200) {
+                showError(result.msg || '计算失败');
+                return;
+            }
+
+            renderResult(result.data);
+        } catch (error) {
+            showError('请求失败，请确认服务是否正常启动');
+        }
+    }
+
+    function renderResult(data) {
+        document.getElementById('summaryStartingAmount').textContent = formatMoney(data.startingAmount);
+        document.getElementById('summaryTargetAmount').textContent = formatMoney(data.targetAmount);
+        document.getElementById('summaryTotalPeriods').textContent = data.totalPeriods;
+        document.getElementById('summaryFinalAmount').textContent = formatMoney(data.finalAmount);
+        document.getElementById('summary').style.display = 'grid';
+
+        const resultBody = document.getElementById('resultBody');
+        resultBody.innerHTML = '';
+
+        if (!data.periods || data.periods.length === 0) {
+            document.getElementById('tableWrap').style.display = 'none';
+            document.getElementById('empty').style.display = 'block';
+            return;
+        }
+
+        data.periods.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>第 ${item.period} 期</td><td>${formatMoney(item.amount)}</td>`;
+            resultBody.appendChild(tr);
+        });
+
+        document.getElementById('tableWrap').style.display = 'block';
+        document.getElementById('empty').style.display = 'none';
+    }
+
+    function resetForm() {
+        document.getElementById('startingAmount').value = '';
+        document.getElementById('rate').value = '';
+        document.getElementById('targetAmount').value = '';
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('tableWrap').style.display = 'none';
+        document.getElementById('empty').style.display = 'none';
+        document.getElementById('resultBody').innerHTML = '';
+        hideError();
+    }
+</script>
+</body>
+</html>

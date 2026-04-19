@@ -1,6 +1,6 @@
 # 服务器端口
 server:
-  port: 9154
+  port: 9199
 # 应用信息
 spring:
   application:

@@ -97,12 +97,6 @@
 			<artifactId>client</artifactId>
 			<version>3.8.4</version>
 		</dependency>
-		<dependency>
-			<groupId>com.mongo</groupId>
-			<artifactId>mymongo</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
 
 	</dependencies>
 
