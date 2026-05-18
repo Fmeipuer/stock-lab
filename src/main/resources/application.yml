@@ -4,7 +4,7 @@ server:
 # 应用信息
 spring:
   application:
-    name: mymongo
+    name: stock-lab
     version: 1.0.0
   # mysql
   datasource:
@@ -27,7 +27,7 @@ spring:
 nebula:
   graph:
     addresses:
-      - 192.168.213.148  # graphd 地址（Docker 本机 or 服务器）
+      - 192.168.102.4  # graphd 地址（Docker 本机 or 服务器）
     user: root
     password: nebula
     max-conn-size: 100
